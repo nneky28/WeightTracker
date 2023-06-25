@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weight Loss Tracker</title>
+    <style>
+      body {
+        background-color: #f1f1f1;
+        font-family: Arial, sans-serif;
+        color: #333;
+      }
+
+      h1 {
+        color: #ff5555;
+        text-align: center;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+      }
+
+      .form-group button {
+        padding: 10px 20px;
+        background-color: #ff5555;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .tracker {
+        margin-top: 30px;
+      }
+
+      .tracker table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .tracker th,
+      .tracker td {
+        padding: 8px;
+        text-align: center;
+      }
+
+      .tracker th {
+        background-color: #ff5555;
+        color: #fff;
+      }
+
+      .tracker tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Weight Loss Tracker</h1>
+
+      <form id="weight-loss-form">
+        <div class="form-group">
+          <label for="current-weight">Current Weight (kg)</label>
+          <input type="number" id="current-weight" required />
+        </div>
+
+        <div class="form-group">
+          <label for="target-weight">Target Weight (kg)</label>
+          <input type="number" id="target-weight" required />
+        </div>
+
+        <div class="form-group">
+          <label for="weeks">Target Weeks</label>
+          <input type="number" id="weeks" required />
+        </div>
+
+        <div class="form-group">
+          <button type="submit">Calculate</button>
+        </div>
+      </form>
+
+      <div id="result" class="result"></div>
+
+      <div id="tracker" class="tracker"></div>
+    </div>
+
+    <script>
+      var weightTracker = [];
+
+      document
+        .getElementById("weight-loss-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          var currentWeight = parseFloat(
+            document.getElementById("current-weight").value
+          );
+          var targetWeight = parseFloat(
+            document.getElementById("target-weight").value
+          );
+          var weeks = parseInt(document.getElementById("weeks").value);
+
+          var weightLossPerWeek = (currentWeight - targetWeight) / weeks;
+
+          var resultElement = document.getElementById("result");
+          resultElement.innerHTML =
+            "You need to lose <span>" +
+            weightLossPerWeek.toFixed(2) +
+            " kg</span> per week.";
+
+          weightTracker.push(currentWeight);
+          displayTracker();
+
+          document.getElementById("current-weight").value = ""; // Clear the input field for next check-in
+        });
+
+      function displayTracker() {
+        var trackerElement = document.getElementById("tracker");
+        trackerElement.innerHTML = "";
+
+        if (weightTracker.length > 0) {
+          var table = document.createElement("table");
+          var headerRow = table.insertRow();
+          var weekHeader = document.createElement("th");
+          weekHeader.textContent = "Week";
+          headerRow.appendChild(weekHeader);
+
+          var weightHeader = document.createElement("th");
+          weightHeader.textContent = "Weight (kg)";
+          headerRow.appendChild(weightHeader);
+
+          var diffHeader = document.createElement("th");
+          diffHeader.textContent = "Difference (kg)";
+          headerRow.appendChild(diffHeader);
+
+          for (var i = 0; i < weightTracker.length; i++) {
+            var row = table.insertRow();
+            var weekCell = row.insertCell();
+            weekCell.textContent = "Week " + (i + 1);
+
+            var weightCell = row.insertCell();
+            weightCell.textContent = weightTracker[i];
+
+            if (i > 0) {
+              var diffCell = row.insertCell();
+              var weightDiff = weightTracker[i] - weightTracker[i - 1];
+              diffCell.textContent = weightDiff.toFixed(2);
+            }
+          }
+
+          trackerElement.appendChild(table);
+        }
+      }
+    </script>
+  </body>
+</html>
